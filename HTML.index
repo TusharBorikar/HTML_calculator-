@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Calculator</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .calculator {
+      width: 330px;
+      background: #222;
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+
+    #display {
+      width: 100%;
+      height: 75px;
+      background: #111;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      padding: 10px;
+      text-align: right;
+      font-size: 32px;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    button {
+      height: 65px;
+      border: none;
+      border-radius: 12px;
+      font-size: 22px;
+      cursor: pointer;
+      background: #444;
+      color: white;
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    .operator {
+      background: #ff9500;
+    }
+
+    .clear {
+      background: #d93636;
+    }
+
+    .equal {
+      background: #28a745;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="calculator">
+
+    <input type="text" id="display" value="0" readonly>
+
+    <div class="buttons">
+
+      <button class="clear" onclick="clearDisplay()">C</button>
+      <button onclick="deleteLast()">⌫</button>
+      <button onclick="addToDisplay('%')">%</button>
+      <button class="operator" onclick="addToDisplay('/')">÷</button>
+
+      <button onclick="addToDisplay('7')">7</button>
+      <button onclick="addToDisplay('8')">8</button>
+      <button onclick="addToDisplay('9')">9</button>
+      <button class="operator" onclick="addToDisplay('*')">×</button>
+
+      <button onclick="addToDisplay('4')">4</button>
+      <button onclick="addToDisplay('5')">5</button>
+      <button onclick="addToDisplay('6')">6</button>
+      <button class="operator" onclick="addToDisplay('-')">−</button>
+
+      <button onclick="addToDisplay('1')">1</button>
+      <button onclick="addToDisplay('2')">2</button>
+      <button onclick="addToDisplay('3')">3</button>
+      <button class="operator" onclick="addToDisplay('+')">+</button>
+
+      <button onclick="addToDisplay('0')">0</button>
+      <button onclick="addToDisplay('.')">.</button>
+      <button class="equal" onclick="calculate()">=</button>
+
+    </div>
+  </div>
+
+  <script>
+    const display = document.getElementById("display");
+
+    function addToDisplay(value) {
+      if (display.value === "0" || display.value === "Error") {
+        display.value = value;
+      } else {
+        display.value += value;
+      }
+    }
+
+    function clearDisplay() {
+      display.value = "0";
+    }
+
+    function deleteLast() {
+      if (display.value.length <= 1 || display.value === "Error") {
+        display.value = "0";
+      } else {
+        display.value = display.value.slice(0, -1);
+      }
+    }
+
+    function calculate() {
+      try {
+        let expression = display.value;
+
+        // Convert percentage
+        expression = expression.replace(/(\d+(\.\d+)?)%/g, "($1/100)");
+
+        // Allow only calculator characters
+        if (!/^[0-9+\-*/().\s]+$/.test(expression)) {
+          display.value = "Error";
+          return;
+        }
+
+        let result = Function('"use strict"; return (' + expression + ')')();
+
+        if (!isFinite(result)) {
+          display.value = "Error";
+        } else {
+          display.value = result;
+        }
+
+      } catch (error) {
+        display.value = "Error";
+      }
+    }
+  </script>
+
+</body>
+</html>
